@@ -9,13 +9,13 @@ public class PlayerController : MonoBehaviour
     public float turnSpeed = 5f;
     public float acceleration = 5f;
     public float maxSpeed = 10f;
-    RigidBody rb;
+    Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
         // Get the player's rigidbody
-        rb = GetComponent<RigidBody>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -29,9 +29,15 @@ public class PlayerController : MonoBehaviour
 
         // Rotate the ship
         // Should add a check to limit whether the ship can rotate when it is not moving
-        transform.Rotate(Vector3.up, Time.deltaTime * turnSpeed * hInput);
+        // transform.Rotate(Vector3.up, Time.deltaTime * turnSpeed * hInput);
 
         // Move the player forward or backward
         
+    }
+
+    private void FixedUpdate()
+    {
+        // Using physics based rotation, so need to rotate in FixedUpdate
+        rb.MoveRotation(rb.rotation * Quaternion.Euler(new Vector3(0, hInput * turnSpeed, 0) * Time.fixedDeltaTime));
     }
 }
