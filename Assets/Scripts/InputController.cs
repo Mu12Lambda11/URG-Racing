@@ -32,12 +32,6 @@ public class InputController : MonoBehaviour
         InputShipTurn();
     }
 
-    private void FixedUpdate()
-    {
-        // Using physics based rotation, so need to rotate in FixedUpdate
-        // rb.MoveRotation(rb.rotation * Quaternion.Euler(new Vector3(0, hInput * turnSpeed, 0) * Time.fixedDeltaTime));
-    }
-
     private void InputShipMovement()
     {
         // Get player input to move forward and call SM to move ship forward

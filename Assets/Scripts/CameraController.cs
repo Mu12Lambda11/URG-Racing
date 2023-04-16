@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float rotatespeed = 10f;
+    public Transform player;
+    Vector3 offset;
 
-    // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
-        
+        // Rotate the anchor to match the player's rotation
+        transform.root.rotation = player.rotation;
+        transform.root.position = player.position;
+
+        // Move camera to follow the player's position
+        // transform.position = player.position + offset;
     }
 }

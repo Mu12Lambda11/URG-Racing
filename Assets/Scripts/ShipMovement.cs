@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class ShipMovement : MonoBehaviour
 {
-    
+    [SerializeField] Transform boxCast;
+    private Vector3 castCenter;
+    private Vector3 halfExtents;
+    [SerializeField] float boxCastDistance = 1f;
+    public float hoverDistance = 5f;
     public float turnSpeed = 5f;
     public float acceleration = 5f;
     public float maxSpeed = 10f;
@@ -16,6 +20,13 @@ public class ShipMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        // Get reference to the cast box to know where to cast from
+        castCenter = boxCast.localPosition;
+        halfExtents = boxCast.localScale / 2;
+
+        // Delete the box after we get the necessary info
+        Destroy(boxCast.gameObject);
     }
 
     // Update is called once per frame
@@ -29,6 +40,7 @@ public class ShipMovement : MonoBehaviour
         // Using physics based rotation, so need to rotate in FixedUpdate
         RotateShip();
         MoveShipForward();
+        HoverShip();
     }
 
     public void Move(float vecMove)
@@ -45,15 +57,30 @@ public class ShipMovement : MonoBehaviour
 
     private void MoveShipForward()
     {
-        Debug.Log(Vector3.right);
-        rb.AddForce(transform.right * forward_move * acceleration);
+        rb.AddForce(transform.right * forward_move * acceleration, ForceMode.Acceleration);
     }
 
     private void RotateShip()
     {
-        rotate_move *= turnSpeed;
+        Vector3 rotVector = rotate_move * turnSpeed;
 
         // Rotate the ship using physics based rotation
-        rb.MoveRotation(rb.rotation * Quaternion.Euler(rotate_move * Time.fixedDeltaTime));
+        rb.MoveRotation(rb.rotation * Quaternion.Euler(rotVector * Time.fixedDeltaTime));
+
+        // rb.AddTorque()
+    }
+
+    private void HoverShip()
+    {
+        // BoxCast with everything except the player
+        RaycastHit hit;
+        bool didHit = Physics.BoxCast(transform.position + castCenter, halfExtents, -transform.up, out hit, transform.rotation, boxCastDistance, ~LayerMask.GetMask("Player"));
+
+        if(didHit)
+        {
+            Debug.Log("We hit!!");
+            // If we hit something, set our position to hover over it a set distance
+            transform.position = new Vector3(transform.position.x, hit.point.y + hoverDistance, transform.position.z);
+        }
     }
 }
